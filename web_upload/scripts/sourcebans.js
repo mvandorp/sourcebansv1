@@ -1161,6 +1161,14 @@ function RemoveMod(name, id)
 	xajax_RemoveMod(id);
 }
 
+function RemoveGameLog(id)
+{
+	var noPerm = confirm("Are you sure you want to delete this log?");
+	if(noPerm == false)
+		return;
+	xajax_RemoveGameLog(id);
+}
+
 function UpdateGroupPermissionCheckBoxes()
 {
 	$('perms').setHTML('');

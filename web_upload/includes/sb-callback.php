@@ -24,6 +24,7 @@ if(isset($_COOKIE['aid'], $_COOKIE['password']) && $userbank->CheckLogin($_COOKI
 {
 	$xajax->registerFunction("AddMod");
 	$xajax->registerFunction("RemoveMod");
+	$xajax->registerFunction("RemoveGameLog");
 	$xajax->registerFunction("AddGroup");
 	$xajax->registerFunction("RemoveGroup");
 	$xajax->registerFunction("RemoveAdmin");
@@ -540,6 +541,31 @@ function RemoveMod($mid)
 	}
 	else
 		$objResponse->addScript("ShowBox('Error', 'There was a problem deleting the MOD from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=mods', true);");
+	return $objResponse;
+}
+
+function RemoveGameLog($lid)
+{
+	$objResponse = new xajaxResponse();
+	global $userbank, $username;
+	if(!$userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS))
+	{
+		$objResponse->redirect("index.php?p=login&m=no_access", 0);
+		$log = new CSystemLog("w", "Hacking Attempt", $username . " tried to remove a game log, but doesnt have access.");
+		return $objResponse;
+	}
+	$lid = (int)$lid;
+	$objResponse->addScript("SlideUp('lid_$lid');");
+
+	$query1 = $GLOBALS['db']->Execute("DELETE FROM `" . DB_PREFIX . "_games` WHERE id = $lid");
+
+	if($query1)
+	{
+		$objResponse->addScript("ShowBox('Log Deleted', 'The selected log has been deleted from the database', 'green', 'index.php?p=admin&c=logs', true);");
+		$log = new CSystemLog("m", "Log Deleted", "Log $lid has been deleted");
+	}
+	else
+		$objResponse->addScript("ShowBox('Error', 'There was a problem deleting the log from the database. Check the logs for more info', 'red', 'index.php?p=admin&c=logs', true);");
 	return $objResponse;
 }
 

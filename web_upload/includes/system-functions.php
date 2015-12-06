@@ -191,6 +191,8 @@ function BuildPageTabs()
 			$submenu->addMenuItem("Settings", 0,"", "index.php?p=admin&amp;c=settings", true);
 		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS))
 			$submenu->addMenuItem("Mods", 0,"", "?p=admin&amp;c=mods", true);
+		if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS))
+			$submenu->addMenuItem("Logs", 0,"", "index.php?p=admin&amp;c=logs", true);
 		SubMenu( $submenu->getMenuArray() );
 }
 
@@ -223,6 +225,9 @@ function BuildBreadcrumbs()
 				break;
 			case "mods":
 				$cat = "Mod management";
+				break;
+			case "logs":
+				$cat = "Log management";
 				break;
 			default:
 				unset($_GET['c']);

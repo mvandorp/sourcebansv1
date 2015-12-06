@@ -343,6 +343,40 @@ else
 			RewritePageTitle("Edit Mod Details");
 		}	
 	}
+	elseif($_GET['c'] == "logs")
+	 // ###################[ Logs ]##################################################################
+	{
+		CheckAdminAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS );
+		if(!isset($_GET['o']))
+		{
+			// ====================[ ADMIN SIDE MENU START ] ===================
+			$modTabMenu = new CTabsMenu();
+			if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS ) )
+				$modTabMenu->addMenuItem("List logs",0);
+			$modTabMenu->outputMenu();
+			// ====================[ ADMIN SIDE MENU END ] ===================	
+			
+			$query = $GLOBALS['db']->GetRow("SELECT COUNT(id) AS cnt FROM `" . DB_PREFIX . "_games`");
+			$log_count = $query['cnt'];
+			$log_list = $GLOBALS['db']->GetAll("SELECT id, server, started_at FROM `" . DB_PREFIX . "_games` WHERE id > 0 ORDER BY started_at DESC");
+			include TEMPLATES_PATH . "/admin.logs.php";
+			RewritePageTitle("View Logs");	
+		}
+		elseif($_GET['o'] == 'view')
+		{
+			$modTabMenu = new CTabsMenu();
+			$modTabMenu->addMenuItem("Back",0, "", "javascript:history.go(-1);", true);
+			$modTabMenu->outputMenu();					
+
+			$log_id = (int)$_GET['id'];
+
+			$query = $GLOBALS['db']->GetRow("SELECT server FROM `" . DB_PREFIX . "_games` WHERE id=$log_id");
+			$log_name = $query['server'];
+			$log_events = $GLOBALS['db']->GetAll("SELECT playerid, TIME(time) AS time, name, flags, text FROM `" . DB_PREFIX . "_game_events` WHERE gameid=$log_id ORDER BY time ASC");
+			include TEMPLATES_PATH . "/admin.view.log.php";
+			RewritePageTitle("View Log");
+		}
+	}
 	elseif($_GET['c'] == "settings")
 	 // ###################[ Settings ]##################################################################
 	{

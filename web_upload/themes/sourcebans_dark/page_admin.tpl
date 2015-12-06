@@ -49,6 +49,14 @@
 		  		</a>
 			</li>
 		{/if}
+		{if $access_logs}
+			<li>
+				<a href="index.php?p=admin&amp;c=logs">
+				<img src="themes/default/images/admin/logs.png" alt="Logs" border="0" /><br />
+				View Logs
+		  		</a>
+			</li>
+		{/if}
 	</ul>
 </div>	
 <br />
