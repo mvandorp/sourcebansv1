@@ -356,9 +356,37 @@ else
 			$modTabMenu->outputMenu();
 			// ====================[ ADMIN SIDE MENU END ] ===================	
 			
-			$query = $GLOBALS['db']->GetRow("SELECT COUNT(id) AS cnt FROM `" . DB_PREFIX . "_games`");
-			$log_count = $query['cnt'];
-			$log_list = $GLOBALS['db']->GetAll("SELECT id, server, started_at FROM `" . DB_PREFIX . "_games` WHERE id > 0 ORDER BY started_at DESC");
+			if(isset($_GET['advSearch']))
+			{
+				// Escape the value, but strip the leading and trailing quote
+				$value = substr($GLOBALS['db']->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
+				$type = $_GET['advType'];
+				switch($type)
+				{
+					case "name":
+						$where = " AND id IN (SELECT gameid FROM `" . DB_PREFIX . "_game_players` WHERE playerid IN (SELECT playerid FROM `" . DB_PREFIX ."_player_names` WHERE name LIKE '%" . $value . "%'))";
+					break;
+					case "steamid":
+						$where = " AND id IN (SELECT gameid FROM `" . DB_PREFIX . "_game_players` WHERE playerid IN (SELECT id FROM `" . DB_PREFIX ."_player_ids` WHERE steamid = '" . $value . "'))";
+					break;
+					case "steam":
+						$where = " AND id IN (SELECT gameid FROM `" . DB_PREFIX . "_game_players` WHERE playerid IN (SELECT id FROM `" . DB_PREFIX ."_player_ids` WHERE steamid LIKE '%" . $value . "%'))";
+					break;
+					case "ip":
+						$where = " AND id IN (SELECT gameid FROM `" . DB_PREFIX . "_game_players` WHERE playerid IN (SELECT playerid FROM `" . DB_PREFIX ."_player_ips` WHERE ip = '" . $value . "'))";
+					break;
+					case "server":
+						$where = " AND serverid = '" . $value . "'";
+					break;
+					default:
+						$_GET['advSearch'] = "";
+						$_GET['advType'] = "";
+						$where = "";
+					break;
+				}
+			}
+			$log_list = $GLOBALS['db']->GetAll("SELECT id, hostname, started_at FROM `" . DB_PREFIX . "_games` WHERE id > 0" . $where . " ORDER BY started_at DESC");
+			$log_count = count($log_list);
 			include TEMPLATES_PATH . "/admin.logs.php";
 			RewritePageTitle("View Logs");	
 		}
@@ -370,8 +398,8 @@ else
 
 			$log_id = (int)$_GET['id'];
 
-			$query = $GLOBALS['db']->GetRow("SELECT server FROM `" . DB_PREFIX . "_games` WHERE id=$log_id");
-			$log_name = $query['server'];
+			$query = $GLOBALS['db']->GetRow("SELECT hostname FROM `" . DB_PREFIX . "_games` WHERE id=$log_id");
+			$log_name = $query['hostname'];
 			$log_events = $GLOBALS['db']->GetAll("SELECT playerid, TIME(time) AS time, name, flags, text FROM `" . DB_PREFIX . "_game_events` WHERE gameid=$log_id ORDER BY time ASC");
 			include TEMPLATES_PATH . "/admin.view.log.php";
 			RewritePageTitle("View Log");

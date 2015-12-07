@@ -955,6 +955,34 @@ function search_admins()
 		window.location = "index.php?p=admin&c=admins&advSearch=" + input + "&advType=" + type;
 }
 
+function search_gamelogs()
+{
+	var type = "";
+	var input = "";
+	if($('name_').checked)
+	{
+		type = "name";
+		input = $('nick').value;
+	}
+	if($('steam_').checked)
+	{
+		type = (document.getElementById('steam_match').value == "1" ? "steam" : "steamid");
+		input = $('steamid').value;
+	}
+	if($('ip_').checked)
+	{
+		type = "ip";
+		input = $('ip').value;
+	}
+	if($('server_').checked)
+	{
+		type = "server";
+		input = $('server').value;
+	}
+	if(type!="" && input!="")
+		window.location = "index.php?p=admin&c=logs&advSearch=" + input + "&advType=" + type;
+}
+
 function search_log()
 {
 	var type = "";

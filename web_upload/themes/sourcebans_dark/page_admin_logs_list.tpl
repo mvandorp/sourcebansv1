@@ -1,6 +1,8 @@
 {if NOT $permission_listlogs}
 	Access Denied!
 {else}
+	{php} require (TEMPLATES_PATH . "/admin.logs.search.php");{/php}
+	
 	<h3>Server Logs ({$log_count})</h3>
 	<table width="100%" cellpadding="1">
 		<tr>
@@ -15,7 +17,7 @@
 			<tr id="lid_{$log.id}">
 				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.id}</td>
 				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.started_at}</td>
-				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.server}</td>
+				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.hostname}</td>
 				{if $permission_viewlogs || $permission_deletelogs}
 				<td style="border-bottom: solid 1px #ccc" height='16'>
 					{if $permission_viewlogs}
