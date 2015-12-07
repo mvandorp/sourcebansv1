@@ -1,12 +1,16 @@
 {if NOT $permission_viewlogs}
 	Access Denied!
 {else}
-	<h3>{$log_id} | {$log_name}</h3>
+	<h3>{$log_id} | {$log_name|escape:'html':'UTF-8'}</h3>
 	<table class="log" width="100%" cellpadding="1">
 		{foreach from="$log_events" item="event"}
 			<tr>
 				{if ($event.flags & (1 << 0)) == 0}
-					<td height='16'><span class="logtime">[{$event.time}] </span><span class="logtextsrv">{$event.text}</span></td>
+					{if $event.playerid == 0}
+						<td height='16'><span class="logtime">[{$event.time}] </span><span class="logtextsrv">{$event.text|escape:'html':'UTF-8'}</span></td>
+					{else}
+						<td height='16'><span class="logtime">[{$event.time}] </span><a class="logtextsrv" href="index.php?p=admin&c=players&o=view&id={$event.playerid}">{$event.text|escape:'html':'UTF-8'}</a></td>
+					{/if}
 				{else}
 					{if ($event.flags & 0x0C) == (1 << 2)}
 						{assign var="teamName" value="(Spectator) "}
@@ -29,7 +33,7 @@
 						{assign var="teamText" value=$teamName}
 					{/if}
 
-					<td height='16'><span class="logtime">[{$event.time}] </span><span class="logteam">{$teamText}</span><span class="{$nameClass}">{$event.name}</span><span class="logtext">: {$event.text}</span></td>
+					<td height='16'><span class="logtime">[{$event.time}] </span><span class="logteam">{$teamText}</span><a href="index.php?p=admin&c=players&o=view&id={$event.playerid}" class="{$nameClass}">{$event.name|escape:'html':'UTF-8'}</a><span class="logtext">: {$event.text|escape:'html':'UTF-8'}</span></td>
 				{/if}
 			</tr>
 		{/foreach}

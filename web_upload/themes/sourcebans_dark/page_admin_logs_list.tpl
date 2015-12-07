@@ -17,7 +17,7 @@
 			<tr id="lid_{$log.id}">
 				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.id}</td>
 				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.started_at}</td>
-				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.hostname}</td>
+				<td style="border-bottom: solid 1px #ccc" height='16'>{$log.hostname|escape:'html':'UTF-8'}</td>
 				{if $permission_viewlogs || $permission_deletelogs}
 				<td style="border-bottom: solid 1px #ccc" height='16'>
 					{if $permission_viewlogs}

@@ -1356,20 +1356,24 @@ div.contextmenu .separator {
 	color: rgb(210, 200, 152);
 }
 
-.lognamespec {
+.lognamespec, .lognamespec:link, .lognamespec:visited, .lognamespec:hover, .lognamespec:active {
 	color: rgb(205, 205, 205);
+	text-decoration: none;
 }
 
-.lognamesurv {
+.lognamesurv, .lognamesurv:link, .lognamesurv:visited, .lognamesurv:hover, .lognamesurv:active {
 	color: rgb(139, 183, 221);
+	text-decoration: none;
 }
 
-.lognameinf {
+.lognameinf, .lognameinf:link, .lognameinf:visited, .lognameinf:hover, .lognameinf:active {
 	color: rgb(210, 13, 17);
+	text-decoration: none;
 }
 
-.logtextsrv {
+.logtextsrv, .logtextsrv:link, .logtextsrv:visited, .logtextsrv:hover, .logtextsrv:active {
 	color: rgb(217, 147, 4);
+	text-decoration: none;
 }
 
 .logtext {
