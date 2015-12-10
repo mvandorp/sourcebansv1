@@ -16,7 +16,7 @@
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
 
 
-if(!isset($_GET['id']))
+if(!isset($_GET['id']) || $userbank->IsHiddenGroup((int)$_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>

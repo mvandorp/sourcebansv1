@@ -156,6 +156,12 @@ else
 				}
 				$advSearchString = "&advSearch=".$_GET['advSearch']."&advType=".$_GET['advType'];
 			}
+
+			if (!$userbank->HasAccess(ADMIN_OWNER)) {
+				$aid = $userbank->aid;
+				$where = $where . " AND ((ADM.aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR ADM.aid = $aid)";
+			}
+
 			$admins = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_admins` AS ADM".$join." WHERE ADM.aid > 0".$where." ORDER BY user LIMIT " . intval(($page-1) * $AdminsPerPage) . "," . intval($AdminsPerPage));
 			// quick fix for the server search showing admins mulitple times.
 			if(isset($_GET['advSearch']) && isset($_GET['advType']) && $_GET['advType'] == 'server') {

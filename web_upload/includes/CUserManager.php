@@ -275,5 +275,25 @@ class CUserManager
 		$GLOBALS['db']->Execute($add_admin,array($name, $steam, $this->encrypt_password($password), $web_group, $email, $web_flags, $immunity, $srv_group, $srv_flags, $srv_password));
 		return ($add_admin) ? (int)$GLOBALS['db']->Insert_ID() : -1;
 	}
+	
+	function IsHidden($aid)
+	{
+		if ($this->HasAccess(ADMIN_OWNER)) {
+			return false;
+		}
+
+		$query = $GLOBALS['db']->GetRow("SELECT COUNT(aid) AS cnt FROM `".DB_PREFIX."_admins` WHERE aid = ? AND ((aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR aid = ?)", array((int)$aid, $this->aid));
+		return ((int)$query['cnt']) == 0;
+	}
+	
+	function IsHiddenGroup($id)
+	{
+		if ($this->HasAccess(ADMIN_OWNER)) {
+			return false;
+		}
+
+		$query = $GLOBALS['db']->GetRow("SELECT COUNT(gid) AS cnt FROM `".DB_PREFIX."_groups` WHERE gid = ? AND (name NOT LIKE 'Hidden%' OR gid = (SELECT gid FROM `" . DB_PREFIX . "_admins` WHERE aid = ?))", array((int)$id, $this->aid));
+		return ((int)$query['cnt']) == 0;
+	}
 }
 ?>
