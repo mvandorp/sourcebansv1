@@ -116,18 +116,10 @@ echo '</div>';
 
 
 // Add Page
-if (!$userbank->HasAccess(ADMIN_OWNER)) {
-	$aid = $userbank->aid;
-	$where = " AND (name NOT LIKE 'Hidden%' OR gid = (SELECT gid FROM `" . DB_PREFIX . "_admins` WHERE aid = $aid))";
-}
-else {
-	$where = "";
-}
-
 $group_list = 				$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type = '3'");
 $servers = 					$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_servers`");
 $server_admin_group_list = 	$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_srvgroups`");
-$server_group_list = 		$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != 3" . $where);
+$server_group_list = 		$GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != 3" . $userbank->HideHiddenGroups());
 $server_list = array();
 $serverscript = "<script type=\"text/javascript\">";
 foreach($servers AS $server)

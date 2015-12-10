@@ -16,7 +16,7 @@
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();}
 global $userbank, $theme;
 
-if(!isset($_GET['id']) || $userbank->IsHidden((int)$_GET['id']))
+if(!isset($_GET['id']) || $userbank->IsHiddenAdmin((int)$_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>

@@ -342,7 +342,7 @@ if(isset($_GET['advSearch']))
 		case "comment":
 			if($userbank->is_admin())
 			{
-				$where = "WHERE CO.commenttxt LIKE ?";
+				$where = "WHERE CO.commenttxt LIKE ?" . $userbank->HideHiddenAdmins("CO.");
 				$advcrit = array("%$value%");
 			}
 			else

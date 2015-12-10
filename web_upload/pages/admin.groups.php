@@ -18,34 +18,14 @@ global $userbank, $theme;
 
 echo '<div id="admin-page-content">';
 
-// Hide hidden groups
-if (!$userbank->HasAccess(ADMIN_OWNER)) {
-	$aid = $userbank->aid;
-	$whereGroups = " AND (name NOT LIKE 'Hidden%' OR gid = (SELECT gid FROM `" . DB_PREFIX . "_admins` WHERE aid = $aid))";
-	$whereUsers = " AND ((aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR aid = $aid)";
-}
-else {
-	$whereGroups = "";
-	$whereUsers = "";
-}
-
 // web groups
-$web_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != '3'" . $whereGroups);
+$web_group_list = $GLOBALS['db']->GetAll("SELECT * FROM `" . DB_PREFIX . "_groups` WHERE type != '3'" . $userbank->HideHiddenGroups());
 for($i=0;$i<count($web_group_list);$i++)
 {
 	$web_group_list[$i]['permissions'] = BitToString($web_group_list[$i]['flags'], $web_group_list[$i]['type']);
-	$query = $GLOBALS['db']->GetRow("SELECT COUNT(gid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'" . $whereUsers);
+	$query = $GLOBALS['db']->GetRow("SELECT COUNT(gid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'" . $userbank->HideHiddenAdmins());
 	$web_group_count[$i] = $query['cnt'];
-	$web_group_admins[$i] = $GLOBALS['db']->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'" . $whereUsers);
-}
-
-// Hide hidden users from groups
-if (!$userbank->HasAccess(ADMIN_OWNER)) {
-	$aid = $userbank->aid;
-	$whereUsers = " AND ((aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR aid = $aid)";
-}
-else {
-	$whereUsers = "";
+	$web_group_admins[$i] = $GLOBALS['db']->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE gid = '" . $web_group_list[$i]['gid'] . "'" . $userbank->HideHiddenAdmins());
 }
 
 // Server admin groups
@@ -54,9 +34,9 @@ for($i=0;$i<count($server_admin_group_list);$i++)
 {
 	$server_admin_group_list[$i]['permissions'] = SmFlagsToSb($server_admin_group_list[$i]['flags']);
 	$srvGroup = $GLOBALS['db']->qstr($server_admin_group_list[$i]['name']);
-	$query = $GLOBALS['db']->GetRow("SELECT COUNT(aid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup" . $whereUsers);
+	$query = $GLOBALS['db']->GetRow("SELECT COUNT(aid) AS cnt FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup" . $userbank->HideHiddenAdmins());
 	$server_admin_group_count[$i] = $query['cnt'];
-	$server_admin_group_admins[$i] = $GLOBALS['db']->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup" . $whereUsers);
+	$server_admin_group_admins[$i] = $GLOBALS['db']->GetAll("SELECT aid, user, authid FROM `" . DB_PREFIX . "_admins` WHERE srv_group = $srvGroup" . $userbank->HideHiddenAdmins());
 	$server_admin_group_overrides[$i] = $GLOBALS['db']->GetAll("SELECT type, name, access FROM `" . DB_PREFIX . "_srvgroups_overrides` WHERE group_id = ?", array($server_admin_group_list[$i]['id']));
 }
 

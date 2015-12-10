@@ -276,7 +276,7 @@ class CUserManager
 		return ($add_admin) ? (int)$GLOBALS['db']->Insert_ID() : -1;
 	}
 	
-	function IsHidden($aid)
+	function IsHiddenAdmin($aid)
 	{
 		if ($this->HasAccess(ADMIN_OWNER)) {
 			return false;
@@ -306,11 +306,22 @@ class CUserManager
 		return ((int)$query['cnt']) == 0;
 	}
 	
-	function HideHiddenAdmins()
+	function HideHiddenAdmins($tablePrefix = "")
 	{
-		if (!$userbank->HasAccess(ADMIN_OWNER)) {
-			$aid = $userbank->aid;
-			return " AND ((aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR aid = $aid)";
+		if (!$this->HasAccess(ADMIN_OWNER)) {
+			$aid = $this->aid;
+			return " AND ((".$tablePrefix."aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR ".$tablePrefix."aid = $aid)";
+		}
+		else {
+			return "";
+		}
+	}
+	
+	function HideHiddenGroups()
+	{
+		if (!$this->HasAccess(ADMIN_OWNER)) {
+			$aid = $this->aid;
+			return " AND (name NOT LIKE 'Hidden%' OR gid = (SELECT gid FROM `" . DB_PREFIX . "_admins` WHERE aid = $aid))";
 		}
 		else {
 			return "";

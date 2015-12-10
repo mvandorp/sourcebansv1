@@ -16,7 +16,7 @@
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
 global $userbank, $theme;
 
-if(!isset($_GET['id']) || $userbank->IsHidden((int)$_GET['id']))
+if(!isset($_GET['id']) || $userbank->IsHiddenAdmin((int)$_GET['id']))
 {
 	echo '<div id="msg-red" >
 	<i><img src="./images/warning.png" alt="Warning" /></i>
@@ -127,15 +127,7 @@ if(isset($_POST['wg']) || isset($_GET['wg']) || isset($_GET['sg']))
 	}
 }
 
-if (!$userbank->HasAccess(ADMIN_OWNER)) {
-	$aid = $userbank->aid;
-	$where = " AND (name NOT LIKE 'Hidden%' OR gid = (SELECT gid FROM `" . DB_PREFIX . "_admins` WHERE aid = $aid))";
-}
-else {
-	$where = "";
-}
-
-$wgroups = $GLOBALS['db']->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3" . $where);
+$wgroups = $GLOBALS['db']->GetAll("SELECT gid, name FROM ".DB_PREFIX."_groups WHERE type != 3" . $userbank->HideHiddenGroups());
 $sgroups = $GLOBALS['db']->GetAll("SELECT id, name FROM ".DB_PREFIX."_srvgroups");
 
 $server_admin_group = $userbank->GetProperty('srv_groups', $_GET['id']);

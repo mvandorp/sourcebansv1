@@ -16,18 +16,10 @@
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} 
 global $userbank, $theme;
 
-if (!$userbank->HasAccess(ADMIN_OWNER)) {
-	$aid = $userbank->aid;
-	$where = " AND ((aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR aid = $aid)";
-}
-else {
-	$where = "";
-}
-
 $counts = $GLOBALS['db']->GetRow("SELECT 
 								 (SELECT COUNT(bid) FROM `" . DB_PREFIX . "_banlog`) AS blocks, 
 								 (SELECT COUNT(bid) FROM `" . DB_PREFIX . "_bans`) AS bans,
-								 (SELECT COUNT(aid) FROM `" . DB_PREFIX . "_admins` WHERE aid > 0". $where .") AS admins,
+								 (SELECT COUNT(aid) FROM `" . DB_PREFIX . "_admins` WHERE aid > 0". $userbank->HideHiddenAdmins() .") AS admins,
 								 (SELECT COUNT(subid) FROM `" . DB_PREFIX . "_submissions` WHERE archiv = '0') AS subs,
 								 (SELECT COUNT(subid) FROM `" . DB_PREFIX . "_submissions` WHERE archiv > 0) AS archiv_subs,
 								 (SELECT COUNT(pid) FROM `" . DB_PREFIX . "_protests` WHERE archiv = '0') AS protests,
