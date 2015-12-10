@@ -295,15 +295,15 @@ class CUserManager
 		$query = $GLOBALS['db']->GetRow("SELECT COUNT(gid) AS cnt FROM `".DB_PREFIX."_groups` WHERE gid = ? AND (name NOT LIKE 'Hidden%' OR gid = (SELECT gid FROM `" . DB_PREFIX . "_admins` WHERE aid = ?))", array((int)$id, $this->aid));
 		return ((int)$query['cnt']) == 0;
 	}
-
-	function IsHiddenComment($cid)
+	
+	function CanEditComment($cid)
 	{
 		if ($this->HasAccess(ADMIN_OWNER)) {
-			return false;
+			return true;
 		}
-
-		$query = $GLOBALS['db']->GetRow("SELECT COUNT(cid) AS cnt FROM `".DB_PREFIX."_comments` WHERE cid = ? AND ((aid NOT IN (SELECT aid FROM `" . DB_PREFIX . "_admins` NATURAL JOIN `" . DB_PREFIX . "_groups` WHERE name LIKE 'Hidden%')) OR aid = ?)", array((int)$cid, $this->aid));
-		return ((int)$query['cnt']) == 0;
+		
+		$query = $GLOBALS['db']->GetRow("SELECT COUNT(cid) AS cnt FROM `".DB_PREFIX."_comments` WHERE cid = ? AND aid = ?", array((int)$cid, $this->aid));
+		return ((int)$query['cnt']) == 1;
 	}
 	
 	function HideHiddenAdmins($tablePrefix = "")

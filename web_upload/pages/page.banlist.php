@@ -668,8 +668,19 @@ if(isset($_GET["comment"])) {
 	$_GET["comment"] = (int)$_GET["comment"];
 	$theme->assign('commenttype', (isset($_GET["cid"])?"Edit":"Add"));
 	
-	if(isset($_GET["cid"]) && !$userbank->IsHiddenComment((int)$_GET["cid"])) {
+	if(isset($_GET["cid"])) {
 		$_GET["cid"] = (int)$_GET["cid"];
+		
+		if (!$userbank->CanEditComment($_GET["cid"])) {
+			echo '<div id="msg-red" >
+	<i><img src="./images/warning.png" alt="Warning" /></i>
+	<b>Error</b>
+	<br />
+	No comment id specified. Please only follow links
+</div>';
+			PageDie();
+		}
+		
 		$ceditdata = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_comments WHERE cid = '".$_GET["cid"]."'");
 		$ctext = htmlspecialchars($ceditdata['commenttxt']);
 		$cotherdataedit = " AND cid != '".$_GET["cid"]."'";
