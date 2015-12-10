@@ -290,24 +290,24 @@ else
 		$theme->assign('theme_version',			strip_tags(theme_version));
 		$theme->assign('theme_link',			strip_tags(theme_link));
 		$theme->assign('theme_screenshot',		'<img width="250px" height="170px" src="themes/'.SB_THEME.'/'.strip_tags(theme_screenshot).'">');		
-			
+		
 		$theme->display('page_admin_settings_themes.tpl');	
 	echo '</div>';
 	#########/[Settings Page]###############
 	
-	#########[Logs Page]###############
-	echo '<div id="2" style="display:none;">';
-		if($userbank->HasAccess(ADMIN_OWNER))
+	if($userbank->HasAccess(ADMIN_OWNER)) {
+		#########[Logs Page]###############
+		echo '<div id="2" style="display:none;">';
 			$theme->assign('clear_logs', "( <a href='javascript:ClearLogs();'>Clear Log</a> )");
-		$theme->assign('page_numbers', 			$page_numbers);
-		$theme->assign('log_items',				$log_list);
-				
-		$theme->display('page_admin_settings_logs.tpl');	
-	echo '</div>';
-	#########/[Logs Page]###############
-	
+			$theme->assign('page_numbers', 			$page_numbers);
+			$theme->assign('log_items',				$log_list);
+			
+			$theme->display('page_admin_settings_logs.tpl');	
+		echo '</div>';
+		#########/[Logs Page]###############
+	}
 }
-	
+
 ?>
 <script>
 $('config_debug').checked = <?php echo $GLOBALS['config']['config.debug']?>;

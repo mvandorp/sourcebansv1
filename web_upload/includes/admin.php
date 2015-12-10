@@ -506,7 +506,10 @@ else
 				$settingsTabMenu->addMenuItem("Features",3);
 			}
 			$settingsTabMenu->addMenuItem("Themes", 1);
-			$settingsTabMenu->addMenuItem("System Log", 2);
+			if($userbank->HasAccess(ADMIN_OWNER))
+			{
+				$settingsTabMenu->addMenuItem("System Log", 2);
+			}
 			$settingsTabMenu->outputMenu();
 		// ====================[ ADMIN SIDE MENU END ] ===================
 	
