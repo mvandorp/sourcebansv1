@@ -60,7 +60,7 @@
 		{if $access_players}
 			<li>
 				<a href="index.php?p=admin&amp;c=players">
-				<img src="themes/default/images/admin/admins.png" alt="Players" border="0" /><br />
+				<img src="themes/default/images/admin/players.png" alt="Players" border="0" /><br />
 				View Players
 		  		</a>
 			</li>
