@@ -9,7 +9,7 @@
 			<td width="10%" height='16' class="front-module-header"><strong>ID</strong></td>
 			<td width="25%" height='16' class="front-module-header"><strong>Date</strong></td>
 			<td width="50%" height='16' class="front-module-header"><strong>Server</strong></td>
-			{if $permission_deletelogs}
+			{if $permission_viewlogs || $permission_deletelogs}
 			<td height='16' class="front-module-header"><strong>Action</strong></td>
 			{/if}
 		</tr>

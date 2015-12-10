@@ -181,7 +181,7 @@ else
 			$adminTabMenu = new CTabsMenu();
 			$adminTabMenu->addMenuItem("Back", 0,"", "javascript:history.go(-1);", true);
 			$adminTabMenu->outputMenu();
-		
+
 			if($_GET['o'] == 'editgroup')
 			{
 				include TEMPLATES_PATH . "/admin.edit.admingroup.php";
@@ -214,12 +214,12 @@ else
 			// ====================[ ADMIN SIDE MENU START ] ===================
 			$serverTabMenu = new CTabsMenu();
 			if($userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_SERVERS ) )
-				$serverTabMenu->addMenuItem("List servers",0);	
+				$serverTabMenu->addMenuItem("List servers",0);
 			if($userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_SERVER ) )
 				$serverTabMenu->addMenuItem("Add new server",1);
 			$serverTabMenu->outputMenu();
 			// ====================[ ADMIN SIDE MENU END ] ===================
-			
+
 			include TEMPLATES_PATH . "/admin.servers.php";
 			RewritePageTitle("Server Management");
 		}
@@ -227,8 +227,8 @@ else
 		{
 			$serverTabMenu = new CTabsMenu();
 			$serverTabMenu->addMenuItem("Back", 0,"", "javascript:history.go(-1);", true);
-			$serverTabMenu->outputMenu();		
-			
+			$serverTabMenu->outputMenu();
+
 			include TEMPLATES_PATH . "/admin.edit.server.php";
 			RewritePageTitle("Edit Server");
 		}
@@ -237,7 +237,7 @@ else
 			$serverTabMenu = new CTabsMenu();
 			$serverTabMenu->addMenuItem("Back", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();
-						
+
 			include TEMPLATES_PATH . "/admin.rcon.php";
 			RewritePageTitle("Server RCON");
 		}
@@ -246,7 +246,7 @@ else
 			$serverTabMenu = new CTabsMenu();
 			$serverTabMenu->addMenuItem("Back", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();
-						
+
 			include TEMPLATES_PATH . "/admin.servers.db.php";
 			RewritePageTitle("Database Config");
 		}
@@ -255,7 +255,7 @@ else
 			$serverTabMenu = new CTabsMenu();
 			$serverTabMenu->addMenuItem("Back", 0,"", "javascript:history.go(-1);", true);
 			$serverTabMenu->outputMenu();
-						
+
 			include TEMPLATES_PATH . "/admin.srvadmins.php";
 			RewritePageTitle("Server Admins");
 		}
@@ -264,7 +264,7 @@ else
 	 // ###################[ Bans ]##################################################################
 	{
 		CheckAdminAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS );
-		
+
 		if(!isset($_GET['o']))
 		{
 			// ====================[ ADMIN SIDE MENU START ] ===================
@@ -403,6 +403,89 @@ else
 			$log_events = $GLOBALS['db']->GetAll("SELECT playerid, TIME(time) AS time, name, flags, text FROM `" . DB_PREFIX . "_game_events` WHERE gameid=$log_id ORDER BY time ASC");
 			include TEMPLATES_PATH . "/admin.view.log.php";
 			RewritePageTitle("View Log");
+		}
+	}
+	elseif($_GET['c'] == "players")
+	 // ###################[ Players ]##################################################################
+	{
+		CheckAdminAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS );
+		if(!isset($_GET['o']))
+		{
+			// ====================[ ADMIN SIDE MENU START ] ===================
+			$modTabMenu = new CTabsMenu();
+			if($userbank->HasAccess( ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS ) )
+				$modTabMenu->addMenuItem("List players",0);
+			$modTabMenu->outputMenu();
+			// ====================[ ADMIN SIDE MENU END ] ===================	
+			
+			if(isset($_GET['advSearch']))
+			{
+				// Escape the value, but strip the leading and trailing quote
+				$value = substr($GLOBALS['db']->qstr($_GET['advSearch'], get_magic_quotes_gpc()), 1, -1);
+				$type = $_GET['advType'];
+				switch($type)
+				{
+					case "name":
+						$where = " AND id IN (SELECT playerid FROM `" . DB_PREFIX ."_player_names` WHERE name LIKE '%" . $value . "%')";
+					break;
+					case "steamid":
+						$where = " AND steamid = '" . $value . "'";
+					break;
+					case "steam":
+						$where = " AND steamid LIKE '%" . $value . "%'";
+					break;
+					case "ip":
+						$where = " AND id IN (SELECT playerid FROM `" . DB_PREFIX ."_player_ips` WHERE ip = '" . $value . "')";
+					break;
+					default:
+						$_GET['advSearch'] = "";
+						$_GET['advType'] = "";
+						$where = "";
+					break;
+				}
+			}
+			$player_list = $GLOBALS['db']->GetAll("SELECT id, steamid, name FROM `" . DB_PREFIX . "_player_ids` LEFT JOIN `" . DB_PREFIX . "_player_names` ON id=playerid WHERE id > 0" . $where . " GROUP BY id");
+			$player_count = count($player_list);
+			include TEMPLATES_PATH . "/admin.players.php";
+			RewritePageTitle("View Players");	
+		}
+		elseif($_GET['o'] == 'view')
+		{
+			$modTabMenu = new CTabsMenu();
+			$modTabMenu->addMenuItem("Back",0, "", "javascript:history.go(-1);", true);
+			$modTabMenu->outputMenu();					
+
+			$player_id = (int)$_GET['id'];
+
+			$player = $GLOBALS['db']->GetRow("SELECT id, steamid FROM `" . DB_PREFIX . "_player_ids` WHERE id=$player_id");
+			$player_names = $GLOBALS['db']->GetAll("SELECT name FROM `" . DB_PREFIX . "_player_names` WHERE playerid=$player_id");
+			$player_ips = $GLOBALS['db']->GetAll("SELECT ip FROM `" . DB_PREFIX . "_player_ips` WHERE playerid=$player_id");
+			$player_alts = $GLOBALS['db']->GetAll("
+				SELECT id, steamid, ip, names
+				FROM (
+					SELECT *
+					FROM `" . DB_PREFIX . "_player_ips`
+					WHERE 
+						ip IN (
+							SELECT ip
+							FROM `" . DB_PREFIX . "_player_ips`
+							WHERE playerid=$player_id
+						)
+						AND playerid<>$player_id
+				) AS ips
+				NATURAL JOIN (
+					SELECT playerid, GROUP_CONCAT(name ORDER BY name ASC SEPARATOR ', ') AS names
+					FROM (
+						SELECT playerid, name
+						FROM `" . DB_PREFIX . "_player_names`
+						GROUP BY playerid, name
+					) AS names
+					GROUP BY playerid
+				) AS grouped_names
+				LEFT JOIN `" . DB_PREFIX . "_player_ids` ON id=playerid
+				ORDER BY ip ASC");
+			include TEMPLATES_PATH . "/admin.view.player.php";
+			RewritePageTitle("View Player Info");
 		}
 	}
 	elseif($_GET['c'] == "settings")

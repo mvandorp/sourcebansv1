@@ -34,6 +34,7 @@ $theme->assign('access_groups', 	$userbank->HasAccess( ADMIN_OWNER|ADMIN_LIST_GR
 $theme->assign('access_settings', 	$userbank->HasAccess(ADMIN_OWNER|ADMIN_WEB_SETTINGS));
 $theme->assign('access_mods', 		$userbank->HasAccess(ADMIN_OWNER|ADMIN_LIST_MODS|ADMIN_ADD_MODS|ADMIN_EDIT_MODS|ADMIN_DELETE_MODS ));
 $theme->assign('access_logs', 		$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS));
+$theme->assign('access_players', 	$userbank->HasAccess(ADMIN_OWNER|ADMIN_ADD_BAN|ADMIN_EDIT_OWN_BANS|ADMIN_EDIT_GROUP_BANS|ADMIN_EDIT_ALL_BANS|ADMIN_BAN_PROTESTS|ADMIN_BAN_SUBMISSIONS));
 
 $theme->assign('sb_svn', defined('SB_SVN'));
 
