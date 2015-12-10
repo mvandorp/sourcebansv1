@@ -548,7 +548,7 @@ while (!$res->EOF)
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C
-											WHERE type = 'B' AND bid = '".$data['ban_id']."' ORDER BY added desc");
+											WHERE type = 'B' AND bid = '".$data['ban_id'] . "'" . $userbank->HideHiddenAdmins() . " ORDER BY added desc");
 
 		if($commentres->RecordCount()>0) {
 			$comment = array();
@@ -667,7 +667,8 @@ if($pages > 1) {
 if(isset($_GET["comment"])) {
 	$_GET["comment"] = (int)$_GET["comment"];
 	$theme->assign('commenttype', (isset($_GET["cid"])?"Edit":"Add"));
-	if(isset($_GET["cid"])) {
+	
+	if(isset($_GET["cid"]) && !$userbank->IsHiddenComment((int)$_GET["cid"])) {
 		$_GET["cid"] = (int)$_GET["cid"];
 		$ceditdata = $GLOBALS['db']->GetRow("SELECT * FROM ".DB_PREFIX."_comments WHERE cid = '".$_GET["cid"]."'");
 		$ctext = htmlspecialchars($ceditdata['commenttxt']);
@@ -680,12 +681,12 @@ if(isset($_GET["comment"])) {
 	}
 	
 	$_GET["ctype"] = substr($_GET["ctype"], 0, 1);
-	
+
 	$cotherdata = $GLOBALS['db']->Execute("SELECT cid, aid, commenttxt, added, edittime,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 											(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 											FROM `".DB_PREFIX."_comments` AS C
-											WHERE type = ? AND bid = ?".$cotherdataedit." ORDER BY added desc", array($_GET["ctype"], $_GET["comment"]));
+											WHERE type = ? AND bid = ?".$cotherdataedit . $userbank->HideHiddenAdmins() . " ORDER BY added desc", array($_GET["ctype"], $_GET["comment"]));
 
 	$ocomments = array();
 	while(!$cotherdata->EOF)

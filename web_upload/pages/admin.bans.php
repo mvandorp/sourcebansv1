@@ -187,7 +187,7 @@ echo '<div id="admin-page-content">';
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 												FROM `".DB_PREFIX."_comments` AS C
-												WHERE type = 'P' AND bid = '".(int)$prot['pid']."' ORDER BY added desc");
+												WHERE type = 'P' AND bid = '".(int)$prot['pid'] . $userbank->HideHiddenAdmins() . "' ORDER BY added desc");
 
 			if($commentres->RecordCount()>0) {
 				$comment = array();
@@ -350,7 +350,7 @@ echo '<div id="admin-page-content">';
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 												(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 												FROM `".DB_PREFIX."_comments` AS C
-												WHERE type = 'P' AND bid = '".(int)$prot['pid']."' ORDER BY added desc");
+												WHERE type = 'P' AND bid = '".(int)$prot['pid'] . $userbank->HideHiddenAdmins() ."' ORDER BY added desc");
 
 			if($commentres->RecordCount()>0) {
 				$comment = array();
@@ -509,7 +509,7 @@ echo '<div id="admin-page-content">';
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 														FROM `".DB_PREFIX."_comments` AS C
-														WHERE type = 'S' AND bid = '".(int)$sub['subid']."' ORDER BY added desc");
+														WHERE type = 'S' AND bid = '".(int)$sub['subid']. $userbank->HideHiddenAdmins() . "' ORDER BY added desc");
 
 					if($commentres->RecordCount()>0) {
 						$comment = array();
@@ -651,7 +651,7 @@ echo '<div id="admin-page-content">';
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.aid) AS comname,
 														(SELECT user FROM `".DB_PREFIX."_admins` WHERE aid = C.editaid) AS editname
 														FROM `".DB_PREFIX."_comments` AS C
-														WHERE type = 'S' AND bid = '".(int)$sub['subid']."' ORDER BY added desc");
+														WHERE type = 'S' AND bid = '".(int)$sub['subid'] . $userbank->HideHiddenAdmins() . "' ORDER BY added desc");
 
 					if($commentres->RecordCount()>0) {
 						$comment = array();
