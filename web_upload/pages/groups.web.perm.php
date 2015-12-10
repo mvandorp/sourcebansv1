@@ -15,9 +15,6 @@
 
 if(!defined("IN_SB")){echo "You should not be here. Only follow links!";die();} ?>
 <table width="90%" border="0" cellspacing="0" cellpadding="4" align="center">
-  <tr>
-    <td colspan="3"><h4 id="webtop">{title}</h4></td>
-  </tr>
   <tr id="wrootcheckbox" name="wrootcheckbox">
     <td colspan="2" class="tablerow2">Root Admin (Full Admin Access)</td>
     <td align="center" class="tablerow2"><input type="checkbox" name="p2" id="p2" onclick="UpdateCheckBox(2, 3, 39);" value="1" /></td>
