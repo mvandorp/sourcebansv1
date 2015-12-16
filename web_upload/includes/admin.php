@@ -450,7 +450,21 @@ else
 					break;
 				}
 			}
-			$player_list = $GLOBALS['db']->GetAll("SELECT id, steamid, name FROM `" . DB_PREFIX . "_player_ids` LEFT JOIN `" . DB_PREFIX . "_player_names` ON id=playerid WHERE id > 0" . $where . " GROUP BY id");
+			$player_list = $GLOBALS['db']->GetAll("
+				SELECT id, steamid, name
+				FROM `" . DB_PREFIX . "_player_ids`
+				LEFT JOIN (
+					SELECT player.playerid, player.name
+					FROM (
+						SELECT playerid, MAX(last_seen) AS last_seen
+						FROM `" . DB_PREFIX . "_player_names`
+						GROUP BY playerid
+					) AS last_player
+					LEFT JOIN
+						`" . DB_PREFIX . "_player_names` AS player
+						ON player.playerid = last_player.playerid AND player.last_seen = last_player.last_seen
+				) AS names ON id=playerid
+				WHERE id > 0" . $where);
 			$player_count = count($player_list);
 			include TEMPLATES_PATH . "/admin.players.php";
 			RewritePageTitle("View Players");	
@@ -464,8 +478,8 @@ else
 			$player_id = (int)$_GET['id'];
 
 			$player = $GLOBALS['db']->GetRow("SELECT id, steamid FROM `" . DB_PREFIX . "_player_ids` WHERE id=$player_id");
-			$player_names = $GLOBALS['db']->GetAll("SELECT name FROM `" . DB_PREFIX . "_player_names` WHERE playerid=$player_id");
-			$player_ips = $GLOBALS['db']->GetAll("SELECT ip FROM `" . DB_PREFIX . "_player_ips` WHERE playerid=$player_id");
+			$player_names = $GLOBALS['db']->GetAll("SELECT name, last_seen FROM `" . DB_PREFIX . "_player_names` WHERE playerid=$player_id ORDER BY last_seen DESC");
+			$player_ips = $GLOBALS['db']->GetAll("SELECT ip, last_seen FROM `" . DB_PREFIX . "_player_ips` WHERE playerid=$player_id ORDER BY last_seen DESC");
 			$player_alts = $GLOBALS['db']->GetAll("
 				SELECT id, steamid, ip, names
 				FROM (

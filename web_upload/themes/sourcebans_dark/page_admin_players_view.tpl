@@ -4,21 +4,25 @@
 	<h3>Info for {$player.steamid}</h3>
 	<table width="100%" cellpadding="1">
 		<tr>
-			<td height='16' class="front-module-header"><strong>Names</strong></td>
+			<td height='16' class="front-module-header"><strong>Name</strong></td>
+			<td height='16' class="front-module-header">Last seen</td>
 		</tr>
 		{foreach from="$player_names" item="player_name"}
 			<tr>
-				<td height='16'>{$player_name.name|escape:'html':'UTF-8'}</td>
+				<td width="75%" height='16'>{$player_name.name|escape:'html':'UTF-8'}</td>
+				<td height='16'>{$player_name.last_seen}</td>
 			</tr>
 		{/foreach}
 	</table>
 	<table width="100%" cellpadding="1">
 		<tr>
-			<td height='16' class="front-module-header"><strong>IPs</strong></td>
+			<td width="75%" height='16' class="front-module-header"><strong>IP</strong></td>
+			<td height='16' class="front-module-header">Last seen</td>
 		</tr>
 		{foreach from="$player_ips" item="player_ip"}
 			<tr>
 				<td height='16'>{$player_ip.ip}</td>
+				<td height='16'>{$player_ip.last_seen}</td>
 			</tr>
 		{/foreach}
 	</table>
