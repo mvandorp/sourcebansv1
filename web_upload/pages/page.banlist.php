@@ -598,11 +598,11 @@ while (!$res->EOF)
 	$data['addcomment'] = CreateLinkR('<img src="images/details.gif" border="0" alt="" style="vertical-align:middle" /> Add Comment','index.php?p=banlist&comment='.$data['ban_id'].'&ctype=B'.$pagelink);
 	//-----------------------------------
 
-	$data['ub_reason'] = (isset($data['ub_reason'])?$data['ub_reason']:"");
- 	$data['banlength'] = $data['ban_length'] . " " .  $data['ub_reason'];
-	$data['view_edit'] = ($userbank->HasAccess(ADMIN_OWNER|ADMIN_EDIT_ALL_BANS) || ($userbank->HasAccess(ADMIN_EDIT_OWN_BANS) && $res->fields['aid']==$userbank->GetAid()) || ($userbank->HasAccess(ADMIN_EDIT_GROUP_BANS) && $res->fields['gid']==$userbank->GetProperty('gid')));
-    $data['view_unban'] = ($userbank->HasAccess(ADMIN_OWNER|ADMIN_UNBAN) || ($userbank->HasAccess(ADMIN_UNBAN_OWN_BANS) && $res->fields['aid']==$userbank->GetAid()) || ($userbank->HasAccess(ADMIN_UNBAN_GROUP_BANS) && $res->fields['gid']==$userbank->GetProperty('gid')));
-    $data['view_delete'] = ($userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_BAN));
+	$data['ub_reason'] = isset($data['ub_reason']) ? $data['ub_reason'] : "";
+	$data['banlength'] = $data['ban_length'] . " " .  $data['ub_reason'];
+	$data['view_edit'] = $userbank->HasAccess(ADMIN_OWNER) || $userbank->HasAccess(ADMIN_EDIT_ALL_BANS) || ($userbank->HasAccess(ADMIN_EDIT_OWN_BANS) && $res->fields['aid']==$userbank->GetAid()) || ($userbank->HasAccess(ADMIN_EDIT_GROUP_BANS) && $res->fields['gid']==$userbank->GetProperty('gid'));
+	$data['view_unban'] = $userbank->HasAccess(ADMIN_OWNER|ADMIN_UNBAN) || ($userbank->HasAccess(ADMIN_UNBAN_OWN_BANS) && $res->fields['aid']==$userbank->GetAid()) || ($userbank->HasAccess(ADMIN_UNBAN_GROUP_BANS) && $res->fields['gid']==$userbank->GetProperty('gid'));
+	$data['view_delete'] = $userbank->HasAccess(ADMIN_OWNER|ADMIN_DELETE_BAN);
 	array_push($bans,$data);
 	$res->MoveNext();
 }

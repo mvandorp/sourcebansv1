@@ -150,7 +150,7 @@
 					  <li>{$ban.friend_ban_link}</li>
 					  {/if}
 					  {/if}
-                      {if ($ban.view_edit && !$ban.unbanned)} 
+                      {if $ban.view_edit} 
                       <li>{$ban.edit_link}</li>
                       {/if}
                       {if ($ban.unbanned == false && $ban.view_unban)}
